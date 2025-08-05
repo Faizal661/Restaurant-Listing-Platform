@@ -5,6 +5,7 @@ import RestaurantList from "./components/RestaurantList";
 import RestaurantDialog from "./components/RestaurantDialog";
 import { getRestaurants } from "./services/api.ts";
 import type { Restaurant } from "./types/Restaurant";
+import toast, { Toaster } from "react-hot-toast";
 import "./styles/App.css";
 
 function App() {
@@ -14,9 +15,14 @@ function App() {
     Restaurant | undefined
   >(undefined);
 
-    const fetchRestaurants = async () => {
-    const { data } = await getRestaurants();
-    setRestaurants(data);
+  const fetchRestaurants = async () => {
+    try {
+      const { data } = await getRestaurants();
+      setRestaurants(data);
+    } catch (error) {
+      console.error("Failed to fetch restaurants:", error);
+      toast.error("Failed to fetch restaurants.");
+    }
   };
 
   useEffect(() => {
@@ -33,7 +39,6 @@ function App() {
     setDialogOpen(true);
   };
 
-
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
@@ -44,6 +49,7 @@ function App() {
 
   return (
     <Container maxWidth="lg" className="app-container">
+      <Toaster />
       <Header onAddClick={handleAdd} />
       <RestaurantList restaurants={restaurants} onEdit={handleEdit} />
       <RestaurantDialog

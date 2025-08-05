@@ -14,6 +14,7 @@ import { Edit, Delete } from "@mui/icons-material";
 import { deleteRestaurant } from "../services/api";
 import type { Restaurant } from "../types/Restaurant";
 import "../styles/RestaurantList.css";
+import toast from "react-hot-toast";
 
 interface RestaurantListProps {
   restaurants: Restaurant[];
@@ -39,11 +40,17 @@ const RestaurantList: React.FC<RestaurantListProps> = ({
   };
 
   const handleConfirmDelete = async () => {
-    if (deleteId !== null) {
-      await deleteRestaurant(deleteId);
-      setLocalRestaurants((prev) => prev.filter((r) => r.id !== deleteId));
-      setDeleteId(null);
-      setConfirmOpen(false);
+    try {
+      if (deleteId !== null) {
+        await deleteRestaurant(deleteId);
+        setLocalRestaurants((prev) => prev.filter((r) => r.id !== deleteId));
+        setDeleteId(null);
+        setConfirmOpen(false);
+        toast.success("Restaurant deleted successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to delete restaurant:", error);
+      toast.error("Failed to delete restaurant.");
     }
   };
 
@@ -55,38 +62,48 @@ const RestaurantList: React.FC<RestaurantListProps> = ({
   return (
     <>
       <List className="restaurant-list">
-        {localRestaurants.map((resto) => (
-          <ListItem key={resto.id} divider>
-            <ListItemText
-              primary={resto.name}
-              secondary={`Address: ${resto.address} | Contact: ${resto.contact}`}
-            />
-            <ListItemSecondaryAction>
-              <IconButton
-                edge="end"
-                aria-label="edit"
-                onClick={() => onEdit(resto)}
-              >
-                <Edit />
-              </IconButton>
-              <IconButton
-                edge="end"
-                aria-label="delete"
-                onClick={() => {
-                  if (resto.id !== null && resto.id !== undefined) {
-                    handleDeleteClick(resto.id);
-                  }
-                }}
-              >
-                <Delete />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
+        {localRestaurants.length > 0 ? (
+          localRestaurants.map((resto) => (
+            <ListItem key={resto.id} className="restaurant-list-item">
+              <ListItemText
+                primary={resto.name}
+                secondary={`Address: ${resto.address} | Contact: ${resto.contact}`}
+              />
+              <ListItemSecondaryAction>
+                <IconButton
+                  edge="end"
+                  aria-label="edit"
+                  onClick={() => onEdit(resto)}
+                >
+                  <Edit />
+                </IconButton>
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  style={{ paddingLeft: "15px" }}
+                  onClick={() => {
+                    if (resto.id !== null && resto.id !== undefined) {
+                      handleDeleteClick(resto.id);
+                    }
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))
+        ) : (
+          <p className="no-restaurant-message">
+            No restaurants found. Add a new one to get started!
+          </p>
+        )}
       </List>
 
-      
-      <Dialog open={confirmOpen} onClose={handleCancelDelete} className="confirm-dialog">
+      <Dialog
+        open={confirmOpen}
+        onClose={handleCancelDelete}
+        className="confirm-dialog"
+      >
         <DialogTitle>
           Are you sure you want to delete this restaurant?
         </DialogTitle>

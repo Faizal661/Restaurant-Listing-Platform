@@ -10,6 +10,7 @@ import {
 import { addRestaurant, updateRestaurant } from "../services/api";
 import type { Restaurant } from "../types/Restaurant";
 import "../styles/RestaurantDialog.css";
+import toast from "react-hot-toast";
 
 interface RestaurantDialogProps {
   open: boolean;
@@ -46,11 +47,23 @@ const RestaurantDialog: React.FC<RestaurantDialogProps> = ({
 
   const handleSubmit = async () => {
     if (formData.id && restaurant) {
-      await updateRestaurant(formData.id, formData);
-      setFormData({ id: null, name: "", address: "", contact: "" });
+      try {
+        await updateRestaurant(formData.id, formData);
+        setFormData({ id: null, name: "", address: "", contact: "" });
+        toast.success("Restaurant updated successfully!");
+      } catch (error) {
+        console.error("Failed to update restaurant:", error);
+        toast.error("Failed to update restaurant.");
+      }
     } else {
-      await addRestaurant(formData);
-      setFormData({ id: null, name: "", address: "", contact: "" });
+      try {
+        await addRestaurant(formData);
+        setFormData({ id: null, name: "", address: "", contact: "" });
+        toast.success("New Restaurant Added successfully!");
+      } catch (error) {
+        console.error("Failed to add restaurant:", error);
+        toast.error("Failed to add restaurant.");
+      }
     }
     onSave();
     onClose();
