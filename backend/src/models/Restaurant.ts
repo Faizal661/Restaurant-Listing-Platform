@@ -1,5 +1,5 @@
 import { DataTypes, Model, InferAttributes, InferCreationAttributes } from 'sequelize';
-import sequelize from '../config/database.ts';
+import sequelize from '../config/database.js';
 
 interface RestaurantAttributes extends InferAttributes<Restaurant> {}
 interface RestaurantCreationAttributes extends InferCreationAttributes<Restaurant> {}

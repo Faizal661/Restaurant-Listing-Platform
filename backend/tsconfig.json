@@ -4,9 +4,9 @@
     "module": "ESNext",
     "outDir": "./dist",
     "rootDir": "./src",
-    "allowImportingTsExtensions": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
+    // "allowImportingTsExtensions": true,
+    "declaration": false,
+    "emitDeclarationOnly": false,
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
@@ -14,6 +14,7 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
+    "src/**/*",
     "**/*.ts",
     "src/server.ts",
     "src/config/config.mjs",
